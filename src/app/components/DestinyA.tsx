@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, MapPin, Star, ArrowUpRight } from "lucide-react";
+import { MapPin, Star, ArrowUpRight, Loader2, Trash2 } from "lucide-react";
+import { Button } from "@heroui/react";
+import { deleteDestiny } from "@/lib/actions/delete"; // Server action import করুন
+import { toast } from "sonner";
 
 interface DestinyProps {
   destiny: {
@@ -21,7 +24,7 @@ interface DestinyProps {
   };
 }
 
-// 1. Safe URL check method to avoid crash on invalid input values
+// Safe URL check method to avoid crash on invalid input values
 const isValidUrl = (urlString: string | undefined | null): boolean => {
   if (!urlString) return false;
   try {
@@ -38,25 +41,53 @@ const isValidUrl = (urlString: string | undefined | null): boolean => {
   }
 };
 
-const Destiny: React.FC<DestinyProps> = ({ destiny }) => {
-  // MongoDB Object ID check
+const DestinyA: React.FC<DestinyProps> = ({ destiny }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // MongoDB Object ID mapping safely
   const itemId = typeof destiny._id === "object" ? destiny._id.$oid : destiny.id || destiny._id;
 
-  // 2. Extract first image safely and validate URL
+  // Extract first image with fallback
   const rawImg = destiny?.images && destiny.images.length > 0 ? destiny.images[0] : null;
   const safeImgSrc = isValidUrl(rawImg)
     ? rawImg
     : "https://images.unsplash.com/photo-1506929562872-bb421503ef21";
 
+  // Delete handler function
+  const handleDelete = async () => {
+    if (!itemId) {
+      toast.error("Invalid item ID. Cannot delete.");
+      return;
+    }
+
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${destiny.title}"?`);
+    if (!confirmDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await deleteDestiny(itemId);
+
+      if (response && response.success === false) {
+        throw new Error(response.error || "Failed to delete the destination.");
+      }
+
+      toast.success("Destination deleted successfully!");
+    } catch (error: any) {
+      console.error("Error during deletion:", error);
+      toast.error(error.message || "Failed to delete item. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="group relative w-full bg-[#0F172A]/80 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:-translate-y-1.5 hover:border-slate-700 hover:shadow-[0_10px_30px_rgba(16,185,129,0.08)] flex flex-col h-[420px]">
       
-      {/* Dynamic Visual Badges over Image */}
+      {/* Visual Header / Image area */}
       <div className="relative h-48 w-full overflow-hidden">
-        {/* Hover zoom effect with Safe Image Source */}
         <Image
           src={safeImgSrc}
-          alt={destiny.title || "Destination"}
+          alt={destiny.title || "Destination Asset"}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -114,18 +145,39 @@ const Destiny: React.FC<DestinyProps> = ({ destiny }) => {
               ${destiny.price}
             </span>
           </div>
-
-          {/* Styled Hero UI CTA Button */}
-          <Link href={`/destiny/${itemId}`} className="inline-flex items-center">
-            <button className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-[0_4px_12px_rgba(79,70,229,0.25)] group-hover:shadow-[0_4px_15px_rgba(16,185,129,0.2)]">
-              Details
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </button>
-          </Link>
+          
+          <div className="flex items-center gap-2">
+            {/* Functional Delete button with Loader */}
+            <Button 
+              size="sm" 
+              color="danger" 
+              variant="flat" 
+              className="font-bold text-xs h-9"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <>
+                  <Trash2 className="w-3.5 h-3.5 mr-0.5" />
+                  DELETE
+                </>
+              )}
+            </Button>
+            
+            {/* EDIT Link button */}
+            <Link href={`/dashboard/admin/destiny/${itemId}`} className="inline-flex items-center">
+              <button className="flex items-center gap-1 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition-all shadow-[0_4px_12px_rgba(79,70,229,0.25)]">
+                EDIT
+                <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Destiny;
+export default DestinyA;

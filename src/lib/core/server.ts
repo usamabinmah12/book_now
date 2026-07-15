@@ -2,89 +2,103 @@ import { getUserToken } from "./session";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-
-export const serverFetch = async (path) => {
-    const res = await fetch(`${baseUrl}${path}`);
-    // handle 401, 404, 403
-    return res.json();
-}
-export const protectedFetch = async (path) => {
-    const res = await fetch(`${baseUrl}${path}`,
-        {
-            headers: await authHeader()
-        }
-    );
-
-    // handle 401, 403
-
-    return res.json();
-}
-export const authHeader = async() => {
-    const token = await getUserToken();
-    const header = token ?  {
-        authorization : `Bearer ${token}`
-    } : {};
-    return header;
-}
-
-export const serverEdit = async (path, editForm) => {
-    try {
-        const res = await fetch(`${baseUrl}${path}`, {
-            method: "PUT", 
-            headers: {
-                'Content-Type': 'application/json',
-                ...await authHeader()
-            },
-            body: JSON.stringify(editForm),
-        });
-
-       
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
-        }
-
-        return await res.json();
-    } catch (error) {
-        console.error("Error in serverEdit:", error);
-        return { success: false, error: error.message };
-    }
+// Authorization header structure binding safely
+export const authHeader = async () => {
+  const token = await getUserToken();
+  return token ? { authorization: `Bearer ${token}` } : {};
 };
-export const serverDelete = async (path) => {
+
+// 1. GET (Read Operation)
+export const serverFetch = async (path: string) => {
+  try {
     const res = await fetch(`${baseUrl}${path}`, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json',
-        }
-       
+      cache: "no-store", // Force refresh target data
+    });
+    if (!res.ok) throw new Error(`Fetch error! Status: ${res.status}`);
+    return await res.json();
+  } catch (error: any) {
+    console.error("Error in serverFetch:", error);
+    return null;
+  }
+};
+
+// 2. GET (Protected Route)
+export const protectedFetch = async (path: string) => {
+  try {
+    const res = await fetch(`${baseUrl}${path}`, {
+      headers: await authHeader(),
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`Protected Fetch error! Status: ${res.status}`);
+    return await res.json();
+  } catch (error: any) {
+    console.error("Error in protectedFetch:", error);
+    return null;
+  }
+};
+
+// 3. PUT (Edit Destination/Assets)
+export const serverEdit = async (path: string, editForm: any) => {
+  try {
+    const res = await fetch(`${baseUrl}${path}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(await authHeader()), // Injecting security token standard
+      },
+      body: JSON.stringify(editForm),
+      cache: "no-store", // Prevent Server actions cache
     });
 
-    // handle 401, 404, 403
-    return res.json();
-}
-export const serverMutation = async (path, data , method="POST") => {
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error: any) {
+    console.error("Error in serverEdit:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// 4. DELETE
+export const serverDelete = async (path: string) => {
+  try {
     const res = await fetch(`${baseUrl}${path}`, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(await authHeader()), // Delete API securely requires Token validation too
+      },
+      cache: "no-store",
     });
 
-    // handle 401, 404, 403
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    return await res.json();
+  } catch (error: any) {
+    console.error("Error in serverDelete:", error);
+    return { success: false, error: error.message };
+  }
+};
 
-    return res.json();
-}
-export const serverMutationag = async (path, data , method="POST") => {
+// 5. POST/PUT Mutator
+export const serverMutation = async (path: string, data: any, method = "POST") => {
+  try {
     const res = await fetch(`${baseUrl}${path}`, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        ...(await authHeader()),
+      },
+      body: JSON.stringify(data),
+      cache: "no-store",
     });
 
-    // handle 401, 404, 403
-
-    return res.json();
-}
+    if (!res.ok) throw new Error(`Mutation HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (error: any) {
+    console.error("Error in serverMutation:", error);
+    return { success: false, error: error.message };
+  }
+};

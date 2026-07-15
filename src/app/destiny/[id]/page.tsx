@@ -9,6 +9,23 @@ interface Params {
   params: Promise<{ id: string }>;
 }
 
+// ১. নিরাপদ URL চেক করার জন্য হেল্পার ফাংশন
+const isValidUrl = (urlString: string | undefined | null): boolean => {
+  if (!urlString) return false;
+  try {
+    if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
+      new URL(urlString);
+      return true;
+    }
+    if (urlString.startsWith("/")) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
 const Details = async ({ params }: Params) => {
   const { id } = await params;
   console.log("ID is:", id);
@@ -44,6 +61,15 @@ const Details = async ({ params }: Params) => {
     })
     .slice(0, 3); // Showing maximum 3 related offers matching categories
 
+  // ২. প্রথম ও দ্বিতীয় ইমেজের জন্য ইউআরএল ভ্যালিডেট করা এবং নিরাপদ সোর্স তৈরি করা
+  const rawMainImg = currDestination.images && currDestination.images[0];
+  const rawSecondaryImg = currDestination.images && currDestination.images[1];
+
+  const defaultFallbackImg = "https://images.unsplash.com/photo-1506929562872-bb421503ef21";
+
+  const safeMainImgSrc = isValidUrl(rawMainImg) ? rawMainImg : defaultFallbackImg;
+  const safeSecondaryImgSrc = isValidUrl(rawSecondaryImg) ? rawSecondaryImg : safeMainImgSrc;
+
   return (
     <main className="min-h-screen bg-[#0B0F19] text-gray-100 pt-20 pb-16">
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl space-y-10">
@@ -53,7 +79,7 @@ const Details = async ({ params }: Params) => {
           {/* Main big image */}
           <div className="relative md:col-span-8 h-full bg-gray-900">
             <Image
-              src={currDestination.images[0]}
+              src={safeMainImgSrc}
               alt={currDestination.title}
               fill
               className="object-cover"
@@ -64,7 +90,7 @@ const Details = async ({ params }: Params) => {
           {/* Secondary mini image */}
           <div className="relative md:col-span-4 hidden md:block h-full bg-gray-800">
             <Image
-              src={currDestination.images[1] || currDestination.images[0]}
+              src={safeSecondaryImgSrc}
               alt={`${currDestination.title} room layout`}
               fill
               className="object-cover"
