@@ -46,7 +46,7 @@ export const Banner: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 pt-2 justify-center lg:justify-start">
-            <Link href="/explore" className="w-full sm:w-auto">
+            <Link href="/destiny" className="w-full sm:w-auto">
               <button className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-[#0B0F19] font-bold text-sm rounded-xl hover:opacity-90 transition-all transform hover:scale-[1.02] shadow-[0_4px_20px_rgba(16,185,129,0.3)]">
                 Explore Stays Now
               </button>
