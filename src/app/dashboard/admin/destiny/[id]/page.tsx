@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner"; 
+// import { toast } from "sonner"; 
 import { Loader2, ArrowLeft, Save, Landmark, DollarSign, Image as ImageIcon } from "lucide-react";
 import { editDestiny } from "@/lib/actions/edit";
+import { toast } from "react-toastify";
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -25,7 +26,7 @@ export default function UpdateDestiny({ params }: Params) {
     images: "",
   });
 
-  // 1. Resolve dynamic ID params and Fetch existing database values
+  
   useEffect(() => {
     const fetchExistingData = async () => {
       try {
@@ -68,7 +69,7 @@ export default function UpdateDestiny({ params }: Params) {
     fetchExistingData();
   }, [params]);
 
-  // 2. Clear input state handler that allows fast backspacing/typing
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditForm((prev) => ({
@@ -89,7 +90,7 @@ export default function UpdateDestiny({ params }: Params) {
         location: editForm.location,
         price: parseFloat(editForm.price) || 0,
         shortDescription: editForm.shortDescription,
-        images: [editForm.images], // Wrapping raw text back to API array schema
+        images: [editForm.images], 
       };
 
       console.log("Submitting updated payload to Server Action:", id, payload);
@@ -139,10 +140,10 @@ export default function UpdateDestiny({ params }: Params) {
           </div>
         </div>
 
-        {/* Form Elements */}
+        
         <form onSubmit={handleEditSubmit} className="bg-[#0F172A] border border-slate-800/80 rounded-2xl p-6 space-y-6 shadow-xl">
           
-          {/* Destination Title */}
+          
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Destination Title</label>
             <div className="relative">
@@ -160,7 +161,7 @@ export default function UpdateDestiny({ params }: Params) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Price */}
+            
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Price per Night ($)</label>
               <div className="relative">
@@ -177,7 +178,7 @@ export default function UpdateDestiny({ params }: Params) {
               </div>
             </div>
 
-            {/* Location */}
+            
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Location / Territory</label>
               <input 
@@ -192,7 +193,7 @@ export default function UpdateDestiny({ params }: Params) {
             </div>
           </div>
 
-          {/* Banner Image URL */}
+         
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Banner Image URL</label>
             <div className="relative">
@@ -208,7 +209,7 @@ export default function UpdateDestiny({ params }: Params) {
             </div>
           </div>
 
-          {/* Description */}
+          
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Brief Overview / Description</label>
             <textarea 
@@ -221,7 +222,7 @@ export default function UpdateDestiny({ params }: Params) {
             />
           </div>
 
-          {/* Submit Action CTA */}
+         
           <button 
             type="submit" 
             disabled={isSubmitting}

@@ -4,24 +4,24 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft, Plus, Landmark, DollarSign, Image as ImageIcon, Sparkles } from "lucide-react";
-import { createDestiny } from "@/lib/actions/add"; // ওপরে তৈরি করা অ্যাকশনটি ইম্পোর্ট করো
+import { createDestiny } from "@/lib/actions/add"; 
 
 export default function AddDestiny() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ফর্মের ইনিশিয়াল স্টেট
+  
   const [addForm, setAddForm] = useState({
     title: "",
     location: "",
     price: "",
     shortDescription: "",
     images: "",
-    category: "Beach", // ডিফল্ট ক্যাটাগরি
+    category: "Beach", 
     availability: true,
   });
 
-  // ইনপুট হ্যান্ডলার
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setAddForm((prev) => ({
@@ -30,13 +30,13 @@ export default function AddDestiny() {
     }));
   };
 
-  // সাবমিট হ্যান্ডলার
+  
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // ব্যাকএন্ডের রিকোয়ার্ড স্ট্রাকচার অনুযায়ী পেলোড সাজানো হচ্ছে
+     
       const payload = {
         title: addForm.title,
         location: addForm.location,
@@ -70,7 +70,7 @@ export default function AddDestiny() {
     <main className="min-h-screen bg-[#0B0F19] text-gray-100 pt-24 pb-16">
       <div className="container mx-auto px-4 max-w-2xl space-y-8">
         
-        {/* ব্যাক নেভিগেশন ও হেডার */}
+       
         <div className="flex items-center gap-4">
           <button 
             type="button"
@@ -85,10 +85,10 @@ export default function AddDestiny() {
           </div>
         </div>
 
-        {/* নতুন ডেস্টিনেশন ফর্ম */}
+       
         <form onSubmit={handleAddSubmit} className="bg-[#0F172A] border border-slate-800/80 rounded-2xl p-6 space-y-6 shadow-xl">
           
-          {/* Destination Title */}
+         
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Destination Title</label>
             <div className="relative">
@@ -123,7 +123,7 @@ export default function AddDestiny() {
               </div>
             </div>
 
-            {/* Location */}
+          
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Location / Territory</label>
               <input 
@@ -139,7 +139,7 @@ export default function AddDestiny() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Category Dropdown */}
+           
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Category</label>
               <select 
@@ -156,7 +156,7 @@ export default function AddDestiny() {
               </select>
             </div>
 
-            {/* Availability */}
+           
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Status Availability</label>
               <select 
@@ -171,7 +171,7 @@ export default function AddDestiny() {
             </div>
           </div>
 
-          {/* Banner Image URL */}
+          
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Banner Image URL</label>
             <div className="relative">
@@ -187,7 +187,6 @@ export default function AddDestiny() {
             </div>
           </div>
 
-          {/* Description */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Brief Overview / Description</label>
             <textarea 
@@ -200,7 +199,7 @@ export default function AddDestiny() {
             />
           </div>
 
-          {/* CTA Submit Button */}
+          
           <button 
             type="submit" 
             disabled={isSubmitting}

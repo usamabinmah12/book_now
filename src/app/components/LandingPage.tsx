@@ -50,7 +50,7 @@ function HeroSection() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link href="/explore">
+          <Link href="/destiny">
             <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all shadow-[0_4px_20px_rgba(79,70,229,0.3)] flex items-center gap-2 group text-sm">
               Start Exploring
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

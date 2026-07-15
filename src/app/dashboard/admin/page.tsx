@@ -117,7 +117,7 @@ const AdminPage = () => {
             <p className="text-[11px] text-slate-500">Monthly breakdown of gross platform income.</p>
           </div>
           <div className="h-72 w-full text-xs">
-            <ResponsiveContainer width="100%" h="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -144,7 +144,7 @@ const AdminPage = () => {
             <p className="text-[11px] text-slate-500">Comparing bookings vs total user views.</p>
           </div>
           <div className="h-72 w-full text-xs">
-            <ResponsiveContainer width="100%" h="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={categoryData} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                 <XAxis dataKey="name" stroke="#64748b" tickLine={false} />
@@ -152,7 +152,7 @@ const AdminPage = () => {
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', color: '#f8fafc' }}
                 />
-                <Legend iconSize={10} wrapperStyle={{ pt: 10 }} />
+                <Legend iconSize={10} wrapperStyle={{ paddingTop: 10 }} />
                 <Bar dataKey="bookings" fill="#10b981" radius={[4, 4, 0, 0]} name="Bookings" />
                 <Bar dataKey="vists" fill="#334155" radius={[4, 4, 0, 0]} name="Views" />
               </BarChart>

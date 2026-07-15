@@ -92,7 +92,7 @@ export default function UserPage() {
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      alert("Error logging out. Please try again.");
+      toast("Error logging out. Please try again.");
     }
   };
 

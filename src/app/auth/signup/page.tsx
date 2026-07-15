@@ -5,7 +5,6 @@ import { Card, Button, Link, TextField, Label, InputGroup, Input, Radio, RadioGr
 import { Eye, EyeSlash, Person, At, ShieldKeyhole } from "@gravity-ui/icons";
 import { signUp, signIn } from "@/lib/auth-client"; 
 import { useRouter, useSearchParams } from "next/navigation";
-// import { toast } from "react-toastify";
 
 function SignupForm() {
     // Form fields
@@ -28,7 +27,7 @@ function SignupForm() {
     const toggleVisibility = () => setIsVisible(!isVisible);
 
     
-    const handleSignup = async (e) => {
+    const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setError("");
@@ -43,7 +42,7 @@ function SignupForm() {
                 name,
                 role,
                 plan
-            });
+            } as any);
 
             if (authError) {
                 setError(authError.message || "Something went wrong during signup.");
@@ -53,7 +52,6 @@ function SignupForm() {
                 setEmail("");
                 setPassword("");
                 router.push(redirectTo);
-                 toast("Signned up Succesfully");
             }
         } catch (err) {
             setError("An unexpected network error occurred.");
@@ -72,12 +70,11 @@ function SignupForm() {
             await signIn.social({
                 provider: "google",
                 callbackURL: redirectTo,
-                
-                newUserOptions: {
+                additionalData: {
                     role: "user",
                     plan: "user_free"
                 }
-            });
+            } as any);
         } catch (err) {
             setError("Google authentication failed. Please try again.");
             setIsGoogleLoading(false);
@@ -86,22 +83,25 @@ function SignupForm() {
 
     return (
         <Card className="w-full max-w-md p-6 sm:p-8 bg-slate-900/40 border border-slate-800 rounded-2xl shadow-xl backdrop-blur-sm text-slate-100 relative">
-            {/* Header Container */}
+            
             <div className="flex flex-col items-center justify-center gap-1.5 pb-6 border-b border-slate-800/80 mb-6 text-center">
                 <h1 className="text-2xl font-black bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">Create an account</h1>
                 <p className="text-xs sm:text-sm text-slate-400 font-light">Fill in the fields below to get started</p>
             </div>
 
           
-            <div className="mb-5">
                 <Button
                     type="button"
                     onClick={handleGoogleSignup}
-                    isLoading={isGoogleLoading}
                     isDisabled={isLoading || isGoogleLoading}
                     className="w-full h-11 rounded-xl bg-slate-950 border border-slate-850 hover:border-slate-700 font-semibold text-xs text-slate-200 flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-inner active:scale-[0.99]"
                 >
-                    {!isGoogleLoading && (
+                    {isGoogleLoading ? (
+                        <svg className="animate-spin h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                    ) : (
                         <svg className="size-4 shrink-0" viewBox="0 0 24 24">
                             <path
                                 fill="#EA4335"
@@ -121,9 +121,8 @@ function SignupForm() {
                             />
                         </svg>
                     )}
-                    Sign up with Google
+                    {isGoogleLoading ? "Connecting..." : "Sign up with Google"}
                 </Button>
-            </div>
 
            
             <div className="flex items-center gap-3 my-2 mb-5 select-none">
@@ -135,11 +134,11 @@ function SignupForm() {
             
             <form onSubmit={handleSignup} className="flex flex-col gap-5">
 
-                {/* Name Field */}
+               
                 <TextField isRequired name="name" className="flex flex-col gap-1.5">
                     <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Name</Label>
                     <InputGroup className="flex items-center gap-2 border border-slate-800 rounded-xl px-3 bg-slate-950/50 focus-within:border-violet-500/50 transition-colors">
-                        <Person className="text-slate-500 pointer-events-none" size={16} />
+                        <Person className="text-slate-500 pointer-events-none" width={16} height={16} />
                         <Input
                             type="text"
                             placeholder="Enter your full name"
@@ -154,7 +153,7 @@ function SignupForm() {
                 <TextField isRequired name="email" type="email" className="flex flex-col gap-1.5">
                     <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Address</Label>
                     <InputGroup className="flex items-center gap-2 border border-slate-800 rounded-xl px-3 bg-slate-950/50 focus-within:border-violet-500/50 transition-colors">
-                        <At className="text-slate-500 pointer-events-none" size={16} />
+                        <At className="text-slate-500 pointer-events-none" width={16} height={16} />
                         <Input
                             placeholder="you@example.com"
                             value={email}
@@ -168,7 +167,7 @@ function SignupForm() {
                 <TextField isRequired name="password" className="flex flex-col gap-1.5">
                     <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Password</Label>
                     <InputGroup className="flex items-center gap-2 border border-slate-800 rounded-xl px-3 bg-slate-950/50 focus-within:border-violet-500/50 transition-colors">
-                        <ShieldKeyhole className="text-slate-500 pointer-events-none" size={16} />
+                        <ShieldKeyhole className="text-slate-500 pointer-events-none" width={16} height={16} />
                         <Input
                             type={isVisible ? "text" : "password"}
                             placeholder="Choose a password"
@@ -182,17 +181,17 @@ function SignupForm() {
                             onClick={toggleVisibility}
                             aria-label="toggle password visibility"
                         >
-                            {isVisible ? <EyeSlash size={18} /> : <Eye size={18} />}
+                            {isVisible ? <EyeSlash width={18} height={18} /> : <Eye width={18} height={18} />}
                         </button>
                     </InputGroup>
                 </TextField>
 
-                {/* Role Selection */}
+                
              
 
-                {/* Dynamic Status Badges */}
+                
                 {error && (
-                    <div className="p-3.5 text-xs font-medium rounded-xl bg-rose-500/10 text-rose-450 border border-rose-500/20">
+                    <div className="p-3.5 text-xs font-medium rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
                         <span className="font-bold">Error:</span> {error}
                     </div>
                 )}
@@ -203,17 +202,22 @@ function SignupForm() {
                     </div>
                 )}
 
-                {/* Action Button */}
+               
                 <Button
                     type="submit"
-                    className="w-full font-bold tracking-wide rounded-xl text-sm h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-600/15 cursor-pointer"
-                    isLoading={isLoading}
+                    className="w-full font-bold tracking-wide rounded-xl text-sm h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-600/15 cursor-pointer flex items-center justify-center gap-2"
                     isDisabled={isLoading || isGoogleLoading}
                 >
-                    Sign Up
+                    {isLoading && (
+                        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                    )}
+                    {isLoading ? "Signing Up..." : "Sign Up"}
                 </Button>
 
-                {/* Navigation Option */}
+              
                 <div className="text-center pt-4 border-t border-slate-800/80 mt-2 text-sm text-slate-400 font-light">
                     Already have an account?{" "}
                     <Link href={`/auth/signin?redirect=${redirectTo}`} className="font-semibold text-violet-400 hover:underline cursor-pointer text-sm">

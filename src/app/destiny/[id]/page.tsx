@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Destiny from '@/app/components/Destiny';
+import { BookingItem } from '@/types';
 import { MapPin, Star, Calendar, ShieldCheck, UserCheck, Coffee, Wifi, Sparkles } from 'lucide-react';
 
 interface Params {
@@ -30,7 +31,7 @@ const Details = async ({ params }: Params) => {
   const { id } = await params;
   console.log("ID is:", id);
 
-  const allDestination = await GetAllDestination();
+  const allDestination: BookingItem[] = await GetAllDestination();
   
   // MongoDB object parsing formatting structure compatible matching logic
   const currDestination = allDestination.find((destiny) => {
@@ -61,7 +62,7 @@ const Details = async ({ params }: Params) => {
     })
     .slice(0, 3); // Showing maximum 3 related offers matching categories
 
-  // ২. প্রথম ও দ্বিতীয় ইমেজের জন্য ইউআরএল ভ্যালিডেট করা এবং নিরাপদ সোর্স তৈরি করা
+  // ২. প্রথম ও দ্বিতীয় ইমেজের জন্য ইউআরএল ভ্যালিডেট করা এবং নিরাপদ সোর্স তৈরি করা
   const rawMainImg = currDestination.images && currDestination.images[0];
   const rawSecondaryImg = currDestination.images && currDestination.images[1];
 

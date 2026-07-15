@@ -1,7 +1,7 @@
 import { GetAllDestination } from '@/lib/api/destination';
 import React from 'react';
 import Destiny from '../components/Destiny';
-import { BookingItem } from '@/types'; // Dynamic data interface typing standard
+import { BookingItem } from '@/types';
 
 const AllDestiny = async () => {
   // Database context path setting logic setup complete

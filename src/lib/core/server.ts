@@ -3,7 +3,7 @@ import { getUserToken } from "./session";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 // Authorization header structure binding safely
-export const authHeader = async () => {
+export const authHeader = async (): Promise<Record<string, string>> => {
   const token = await getUserToken();
   return token ? { authorization: `Bearer ${token}` } : {};
 };
@@ -12,7 +12,7 @@ export const authHeader = async () => {
 export const serverFetch = async (path: string) => {
   try {
     const res = await fetch(`${baseUrl}${path}`, {
-      cache: "no-store", // Force refresh target data
+      cache: "no-store",
     });
     if (!res.ok) throw new Error(`Fetch error! Status: ${res.status}`);
     return await res.json();
@@ -44,10 +44,10 @@ export const serverEdit = async (path: string, editForm: any) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        ...(await authHeader()), // Injecting security token standard
+        ...(await authHeader()),
       },
       body: JSON.stringify(editForm),
-      cache: "no-store", // Prevent Server actions cache
+      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -69,7 +69,7 @@ export const serverDelete = async (path: string) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        ...(await authHeader()), // Delete API securely requires Token validation too
+        ...(await authHeader()),
       },
       cache: "no-store",
     });

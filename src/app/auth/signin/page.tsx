@@ -5,27 +5,24 @@ import { Card, Button, Link, TextField, Label, InputGroup, Input } from "@heroui
 import { Eye, EyeSlash, At, ShieldKeyhole } from "@gravity-ui/icons";
 import { signIn } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
-// import { toast } from "react-toastify";
 
 function SigninForm() {
-    // Form fields
+    
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectTo = searchParams.get("redirect") || "/";
 
-    
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isGoogleLoading, setIsGoogleLoading] = useState(false); // 💡 গুগল লোডিং স্টেট
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
-   
-    const handleSignin = async (e) => {
+    const handleSignin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
         setSuccess("");
@@ -44,7 +41,6 @@ function SigninForm() {
                 setEmail("");
                 setPassword("");
                 router.push(redirectTo);
-                toast("Signned in Succesfully");
             }
         } catch (err) {
             setError("An unexpected network error occurred.");
@@ -53,7 +49,6 @@ function SigninForm() {
         }
     };
 
-   
     const handleGoogleSignin = async () => {
         setError("");
         setSuccess("");
@@ -78,17 +73,19 @@ function SigninForm() {
                 <p className="text-xs sm:text-sm text-slate-400 font-light">Enter your credentials to access your account</p>
             </div>
 
-            
             <div className="mb-5">
                 <Button
                     type="button"
                     onClick={handleGoogleSignin}
-                    isLoading={isGoogleLoading}
                     isDisabled={isLoading || isGoogleLoading}
                     className="w-full h-11 rounded-xl bg-slate-950 border border-slate-850 hover:border-slate-700 font-semibold text-xs text-slate-200 flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-inner active:scale-[0.99]"
                 >
-                    {/* SVG Google Icon */}
-                    {!isGoogleLoading && (
+                    {isGoogleLoading ? (
+                        <svg className="animate-spin h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                    ) : (
                         <svg className="size-4 shrink-0" viewBox="0 0 24 24">
                             <path
                                 fill="#EA4335"
@@ -108,25 +105,24 @@ function SigninForm() {
                             />
                         </svg>
                     )}
-                    Continue with Google
+                    {isGoogleLoading ? "Connecting..." : "Continue with Google"}
                 </Button>
             </div>
 
-           
             <div className="flex items-center gap-3 my-2 mb-5 select-none">
                 <div className="h-[1px] bg-slate-900 flex-grow" />
                 <span className="text-[10px] font-bold font-mono tracking-widest text-slate-600 uppercase">OR</span>
                 <div className="h-[1px] bg-slate-900 flex-grow" />
             </div>
 
-            
             <form onSubmit={handleSignin} className="flex flex-col gap-5">
 
                 {/* Email Field */}
                 <TextField isRequired name="email" type="email" className="flex flex-col gap-1.5">
                     <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Address</Label>
                     <InputGroup className="flex items-center gap-2 border border-slate-800 rounded-xl px-3 bg-slate-950/50 focus-within:border-violet-500/50 transition-colors">
-                        <At className="text-slate-500 pointer-events-none" size={16} />
+                        {/* 💡 width এবং height ব্যবহার করে ফিক্স করা হয়েছে */}
+                        <At className="text-slate-500 pointer-events-none" width={16} height={16} />
                         <Input
                             placeholder="you@example.com"
                             value={email}
@@ -136,11 +132,12 @@ function SigninForm() {
                     </InputGroup>
                 </TextField>
 
-                {/* Password Field */}
+               
                 <TextField isRequired name="password" className="flex flex-col gap-1.5">
                     <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Password</Label>
                     <InputGroup className="flex items-center gap-2 border border-slate-800 rounded-xl px-3 bg-slate-950/50 focus-within:border-violet-500/50 transition-colors">
-                        <ShieldKeyhole className="text-slate-500 pointer-events-none" size={16} />
+                        
+                        <ShieldKeyhole className="text-slate-500 pointer-events-none" width={16} height={16} />
                         <Input
                             type={isVisible ? "text" : "password"}
                             placeholder="Enter your password"
@@ -154,14 +151,14 @@ function SigninForm() {
                             onClick={toggleVisibility}
                             aria-label="toggle password visibility"
                         >
-                            {isVisible ? <EyeSlash size={18} /> : <Eye size={18} />}
+                            {/* 💡 width এবং height ব্যবহার করে ফিক্স করা হয়েছে */}
+                            {isVisible ? <EyeSlash width={18} height={18} /> : <Eye width={18} height={18} />}
                         </button>
                     </InputGroup>
                 </TextField>
 
-                
                 {error && (
-                    <div className="p-3.5 text-xs font-medium rounded-xl bg-rose-500/10 text-rose-450 border border-rose-500/20">
+                    <div className="p-3.5 text-xs font-medium rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
                         <span className="font-bold">Error:</span> {error}
                     </div>
                 )}
@@ -172,17 +169,20 @@ function SigninForm() {
                     </div>
                 )}
 
-                
                 <Button
                     type="submit"
-                    className="w-full font-bold tracking-wide rounded-xl text-sm h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-600/15 cursor-pointer"
-                    isLoading={isLoading}
                     isDisabled={isLoading || isGoogleLoading}
+                    className="w-full font-bold tracking-wide rounded-xl text-sm h-12 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-lg shadow-violet-600/15 cursor-pointer flex items-center justify-center gap-2"
                 >
-                    Sign In
+                    {isLoading && (
+                        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                    )}
+                    {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
 
-               
                 <div className="text-center pt-4 border-t border-slate-800/80 mt-2 text-sm text-slate-400 font-light">
                     New to AiVerse?{" "}
                     <Link href={`/auth/signup?redirect=${redirectTo}`} className="font-semibold text-violet-400 hover:underline cursor-pointer text-sm">

@@ -6,24 +6,22 @@ import Link from "next/link";
 import { Button } from "@heroui/react";
 import logo from "../../assets/logo.png";
 import { signOut, useSession } from "@/lib/auth-client";
-import { motion, AnimatePresence } from "framer-motion";
-
+import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session, isPending, status } = useSession(); 
+  const { data: session, isPending } = useSession();
 
   const user = session?.user;
   const isLoggedIn = !!user;
-  
-  const isLoading = isPending || status === "loading";
-  
-  let userRole = user?.role || "user";
-  const userPlan = user?.plan || "user_free";
-  
+  const isLoading = isPending;
+
+  const userRole = user?.role || "user";
+
   const handleSignOut = async () => {
     await signOut();
-    toast("Logged Out Succesfully");
+    toast.success("Logged Out Successfully");
   };
 
   const menuItems = [
@@ -31,9 +29,7 @@ const Navbar = () => {
     { label: "All Destiny", href: "/destiny" },
   ];
 
-  const isFreePlan = userPlan === "user_free" || userPlan === "creator_free" || !userPlan;
-
-  const menuVariants = {
+  const menuVariants: Variants = {
     hidden: { opacity: 0, height: 0 },
     visible: { opacity: 1, height: "auto", transition: { duration: 0.3, ease: "easeInOut" } },
     exit: { opacity: 0, height: 0, transition: { duration: 0.2, ease: "easeInOut" } }
@@ -43,7 +39,7 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-900/80 backdrop-blur-md text-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          
+
           {/* Left Side: Hamburger & Brand */}
           <div className="flex items-center gap-4">
             <button
@@ -75,7 +71,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          
+          {/* Desktop Menu */}
           <div className="hidden sm:flex sm:items-center sm:gap-6">
             {menuItems.map((item, index) => (
               <motion.div key={index} whileHover={{ y: -1 }}>
@@ -94,14 +90,10 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Upgrade / Pricing Button */}
-          
-
           {/* Right Side Actions: Auth Control / Loading Spinner */}
           <div className="flex items-center gap-4 min-w-[100px] justify-end">
             <AnimatePresence mode="wait">
               {isLoading ? (
-                
                 <motion.div
                   key="loader"
                   initial={{ opacity: 0 }}
@@ -120,14 +112,14 @@ const Navbar = () => {
                   <Link href="/auth/signin" className="hidden sm:inline-block text-sm font-medium text-slate-300 hover:text-violet-400 transition-colors">
                     Login
                   </Link>
-                  <Link href="/auth/signup" className=" flex items-center bg-violet-600 text-white font-medium hover:bg-violet-500 rounded-xl text-sm h-9 px-4 cursor-pointer">
+                  <Link href="/auth/signup" className="flex items-center bg-violet-600 text-white font-medium hover:bg-violet-500 rounded-xl text-sm h-9 px-4 cursor-pointer">
                     Register
                   </Link>
                 </motion.div>
               ) : (
                 <motion.div key="auth-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-4">
-                  <span className=" text-slate-300 hidden md:inline text-2xl">
-                    Hi, <span className="font-bold text-violet-400 ">{user.name}</span>
+                  <span className="text-slate-300 hidden md:inline text-sm">
+                    Hi, <span className="font-bold text-violet-400">{user.name}</span>
                   </span>
                   <Button className="border border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl text-sm h-9 px-4 cursor-pointer" onClick={handleSignOut}>
                     Logout

@@ -6,7 +6,8 @@ import Link from "next/link";
 import { MapPin, Star, ArrowUpRight, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@heroui/react";
 import { deleteDestiny } from "@/lib/actions/delete"; // Server action import করুন
-import { toast } from "sonner";
+import { toast } from "react-toastify";
+// import { toast } from "sonner";
 
 interface DestinyProps {
   destiny: {
@@ -49,7 +50,7 @@ const DestinyA: React.FC<DestinyProps> = ({ destiny }) => {
 
   // Extract first image with fallback
   const rawImg = destiny?.images && destiny.images.length > 0 ? destiny.images[0] : null;
-  const safeImgSrc = isValidUrl(rawImg)
+  const safeImgSrc = rawImg && isValidUrl(rawImg)
     ? rawImg
     : "https://images.unsplash.com/photo-1506929562872-bb421503ef21";
 
@@ -71,7 +72,7 @@ const DestinyA: React.FC<DestinyProps> = ({ destiny }) => {
         throw new Error(response.error || "Failed to delete the destination.");
       }
 
-      toast.success("Destination deleted successfully!");
+      toast("Destination deleted successfully!");
     } catch (error: any) {
       console.error("Error during deletion:", error);
       toast.error(error.message || "Failed to delete item. Please try again.");
@@ -149,12 +150,9 @@ const DestinyA: React.FC<DestinyProps> = ({ destiny }) => {
           <div className="flex items-center gap-2">
             {/* Functional Delete button with Loader */}
             <Button 
-              size="sm" 
-              color="danger" 
-              variant="flat" 
-              className="font-bold text-xs h-9"
+              className="font-bold text-xs h-9 px-3 bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
               onClick={handleDelete}
-              disabled={isDeleting}
+              isDisabled={isDeleting}
             >
               {isDeleting ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
