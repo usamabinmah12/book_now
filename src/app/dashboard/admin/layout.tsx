@@ -1,11 +1,16 @@
 import Sidebar from '@/app/components/Sidebar';
+import { useSession } from '@/lib/auth-client';
+import { requireRole } from '@/lib/core/session';
 import React from 'react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const Layout = ({ children }: AdminLayoutProps) => {
+const Layout = async({ children }: AdminLayoutProps) => {
+   await requireRole('admin');
+   
+  // const user = await useSession();
   return (
     <div className="flex min-h-screen w-full bg-[#0B0F19] overflow-hidden">
       

@@ -1,5 +1,6 @@
 
 import { Banner } from "./components/Banner";
+import Footer from "./components/Footer";
 import LandingPage from "./components/LandingPage";
 
 
@@ -9,6 +10,7 @@ export default function Home() {
     
       <Banner></Banner>
       <LandingPage></LandingPage>
+      <Footer></Footer>
     </div>
     
   );

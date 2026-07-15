@@ -95,19 +95,7 @@ const Navbar = () => {
           </div>
 
           {/* Upgrade / Pricing Button */}
-          <div>
-            {user ? <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Link
-                href="/plans"
-                className="text-xs font-bold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 px-3 py-2 rounded-[20px] shadow-lg shadow-indigo-500/10 transition-all tracking-wide uppercase inline-block"
-              >
-                {isLoading ? "Checking Plan..." : isFreePlan ? "Upgrade To Pro" : "Premium Plan"}
-              </Link>
-            </motion.div>
-            : 
-            ""}
-            
-          </div>
+          
 
           {/* Right Side Actions: Auth Control / Loading Spinner */}
           <div className="flex items-center gap-4 min-w-[100px] justify-end">
